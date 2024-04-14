@@ -1,0 +1,1 @@
+../dineroIV -l1-isize 32k -l1-dsize 32k -l1-ibsize 64 -l1-dbsize 64 -l2-isize 128k -l2-dsize 128k -l2-ibsize 64 -l2-dbsize 64 -l1-irepl r -l1-drepl r -l2-irepl r -l2-drepl r  -l2-iassoc 4 -l2-dassoc 4 <fours.din >resfours.txt
