@@ -1,5 +1,1 @@
-../dineroIV -l1-isize 32k  -l1-iassoc 1 -l1-ibsize 64 -l1-ifetch d -l1-irepl r
-            -l1-dsize 32k  -l1-dassoc 1 -l1-dbsize 64 -l1-dfetch d -l1-drepl r  
-            -l2-usize 256k -l2-uassoc 4 -l2-ubsize 64 -l2-ufetch d -l2-urepl r -informat D <fours.din >resfours.txt
-
 ../dineroIV -l1-isize 32k  -l1-iassoc 1 -l1-ibsize 64 -l1-ifetch d -l1-irepl r -l1-dsize 32k  -l1-dassoc 1 -l1-dbsize 64 -l1-dfetch d -l1-drepl r  -l2-usize 256k -l2-uassoc 4 -l2-ubsize 64 -l2-ufetch d -l2-urepl r -informat D <foursTwo.din >resfoursTwo.txt

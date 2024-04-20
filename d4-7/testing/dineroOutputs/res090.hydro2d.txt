@@ -1,0 +1,93 @@
+---Dinero IV cache simulator, version 7
+---Written by Jan Edler and Mark D. Hill
+---Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.
+---All rights reserved.
+---Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.
+---See -copyright option for details
+
+---Summary of options (-help option gives usage information).
+
+-l2-usize 262144
+-l1-isize 32768
+-l1-dsize 32768
+-l2-ubsize 64
+-l1-ibsize 64
+-l1-dbsize 64
+-l2-usbsize 64
+-l1-isbsize 64
+-l1-dsbsize 64
+-l2-uassoc 4
+-l1-iassoc 1
+-l1-dassoc 1
+-l2-urepl r
+-l1-irepl r
+-l1-drepl r
+-l2-ufetch d
+-l1-ifetch d
+-l1-dfetch d
+-l2-uwalloc a
+-l1-dwalloc a
+-l2-uwback a
+-l1-dwback a
+-skipcount 0
+-flushcount 0
+-maxcount 0
+-stat-interval 0
+-informat D
+-on-trigger 0x0
+-off-trigger 0x0
+
+---Simulation begins.
+---Simulation complete.
+l1-icache
+ Metrics		      Total	      Instrn	       Data	       Read	      Write	       Misc
+ -----------------	      ------	      ------	      ------	      ------	      ------	      ------
+ Demand Fetches		      748688	      748688	           0	           0	           0	           0
+  Fraction of total	      1.0000	      1.0000	      0.0000	      0.0000	      0.0000	      0.0000
+
+ Demand Misses		         887	         887	           0	           0	           0	           0
+  Demand miss rate	      0.0012	      0.0012	      0.0000	      0.0000	      0.0000	      0.0000
+
+ Multi-block refs                 0
+ Bytes From Memory	       56768
+ ( / Demand Fetches)	      0.0758
+ Bytes To Memory	           0
+ ( / Demand Writes)	      0.0000
+ Total Bytes r/w Mem	       56768
+ ( / Demand Fetches)	      0.0758
+
+l1-dcache
+ Metrics		      Total	      Instrn	       Data	       Read	      Write	       Misc
+ -----------------	      ------	      ------	      ------	      ------	      ------	      ------
+ Demand Fetches		      251439	           0	      251439	      166696	       84743	           0
+  Fraction of total	      1.0000	      0.0000	      1.0000	      0.6630	      0.3370	      0.0000
+
+ Demand Misses		       11936	           0	       11936	        6748	        5188	           0
+  Demand miss rate	      0.0475	      0.0000	      0.0475	      0.0405	      0.0612	      0.0000
+
+ Multi-block refs               127
+ Bytes From Memory	      763904
+ ( / Demand Fetches)	      3.0381
+ Bytes To Memory	      345792
+ ( / Demand Writes)	      4.0805
+ Total Bytes r/w Mem	     1109696
+ ( / Demand Fetches)	      4.4134
+
+l2-ucache
+ Metrics		      Total	      Instrn	       Data	       Read	      Write	       Misc
+ -----------------	      ------	      ------	      ------	      ------	      ------	      ------
+ Demand Fetches		       18226	         887	       17339	       11936	        5403	           0
+  Fraction of total	      1.0000	      0.0487	      0.9513	      0.6549	      0.2964	      0.0000
+
+ Demand Misses		        6286	         692	        5594	        5533	          61	           0
+  Demand miss rate	      0.3449	      0.7802	      0.3226	      0.4636	      0.0113	      0.0000
+
+ Multi-block refs                 0
+ Bytes From Memory	      398400
+ ( / Demand Fetches)	     21.8589
+ Bytes To Memory	      305408
+ ( / Demand Writes)	     56.5256
+ Total Bytes r/w Mem	      703808
+ ( / Demand Fetches)	     38.6156
+
+---Execution complete.
