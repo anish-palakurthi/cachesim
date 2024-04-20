@@ -27,52 +27,10 @@ class cachesim:
             n >>= 1
         return count
 
-    #logic for l1 cache access
-    def cache_access_l1(self, op, address):
-        hit = dirty = compulsory = False
-        evicted = None
-
-        #shift set bits all the way to the right and mask tag bits(remaining) to get set bits
-        set_bits = (address >> self.set_offset) & self.set_mask
-
-        #shift tag bits all the way to the right to get tag bits
-        tag_bits = (address >> self.tag_offset)
-        
-        #hit
-        if self.cache[set_bits][0] == tag_bits:
-            hit = True
-            
-            #if it is a write, mark dirty
-            if op == 1:
-                self.cache[set_bits][1] = True
-        
-        #miss
-        else:
-            #not valid block
-            if self.cache[set_bits][0] == 0:
-                compulsory = True
-            
-            #get dirty status
-            dirty = self.cache[set_bits][1]
-
-            #reconstruct evicted address by shifting tag bits to the left and adding set bits via OR
-            evicted = self.cache[set_bits][0] << self.tag_offset | set_bits << self.set_offset
-            
-            #update block tag bits to reflect new tag bits
-            self.cache[set_bits][0] = tag_bits
-        
-        # Mark valid
-        self.cache[set_bits][2] = True
-
-
-        #runner file should perform calculations based on the output
-        return [hit, dirty, compulsory, evicted]
-
-
-    #logic for l2 cache access
-    def cache_access_l2(self, op, address):
+    #logic for cache access
+    def cache_access(self, op, address):
         hit = dirty = False
-        compulsory = False
+        evicted = None
 
         #calculate set and tag bits
         set_bits = ((address >> self.set_offset) & self.set_mask) * self.associativity
@@ -109,8 +67,6 @@ class cachesim:
                 #mark block as valid
                 self.cache[invalid_block][2] = True
 
-                #indicate a compulsory miss happened
-                compulsory = True
 
 
             # Eviction -- no invalid blocks, so random replacement
@@ -123,86 +79,100 @@ class cachesim:
                 #get dirty status to see if writeback is needed
                 dirty = self.cache[idx][1]
 
+                #reconstruct evicted address by shifting tag bits to the left and adding set bits via OR
+                evicted = self.cache[set_bits][0] << self.tag_offset | set_bits << self.set_offset
+
                 #update tag bits to reflect new address
                 self.cache[idx][0] = tag_bits
 
 
         #runner file should perform calculations based on the output
-        return [hit, dirty, compulsory] 
+        return [hit, dirty, evicted] 
 
 
 def main(file_path, associativity):
     
+    # Initialize cache objects
     l1Data = cachesim(32768, 64, 1)
     l1Instructions = cachesim(32768, 64, 1)
     l2 = cachesim(262144, 64, associativity)
 
+
     # All measured in ns, penalty in pj
     l1_idle = l1_active = l2_idle = l2_active = dram_idle = dram_active = penalty = 0
 
+    # Hit and total counters
     l1_instruction_hits = l1_instruction_total = 0
     l1_data_hits = l1_data_total = 0
     l2_hits = l2_total = 0
-    compulsoryCount = 0
-    compulsory = False
+
+    # Eviction counter
     evicted = 0
 
     with open(file_path, 'r') as f:
+
+        #read input line
         for line in f:
             hit = dirty = False
-            #parse line
+
+            #parse line to get operation and address
             line = line.split()
             op = int(line[0])
             address = int(line[1], 16)
 
+
             # L1 Access
+
+            # Instruction Cache
             if (op == 2):
-                hit, dirty, compulsory, evicted = l1Instructions.cache_access_l1(op, address)
+                hit, dirty, evicted = l1Instructions.cache_access(op, address)
                 if hit:
                     l1_instruction_hits += 1
                 l1_instruction_total += 1
+
+            # Data Cache
             else:
-                hit, dirty, compulsory, evicted = l1Data.cache_access_l1(op, address)
+                hit, dirty, evicted = l1Data.cache_access(op, address)
                 if hit:
                     l1_data_hits += 1
-                    
                 l1_data_total += 1
 
+            #costs of L1 access
             l1_active += 0.5
             l2_active += 0.5
             dram_idle += 0.5
-            penalty += 5 if op != 1 else 0
+            penalty += 5 if op != 1 else 0 #writes are handled below
 
             # Writeback to L2 and DRAM if dirty eviction
             if dirty:
-                penalty += 640 if op != 1 else 0 # from l1-dram
+                penalty += 640 if op != 1 else 0 # cost of going to DRAM
                 
-                hit, dirty, compulsory = l2.cache_access_l2(1, evicted)
-                if compulsory:
-                    compulsoryCount += 1
+                #writeback to L2 
+                hit, dirty, evicted = l2.cache_access(1, evicted)
+
 
                 if hit:
                     l2_hits += 1
                 l2_total += 1
 
-            # L1 Miss
+            # L1 Miss -- won't execute if dirty code above has executed, as dirty code only executes on dirty miss evict
             if not hit:
+
+
                 # Access L2
-                hit, dirty, compulsory = l2.cache_access_l2(op, address)
-                if compulsory:
-                    compulsoryCount += 1
+                hit, dirty, evicted = l2.cache_access(op, address)
+
 
                 if hit:
                     l2_hits += 1
-
                 l2_total += 1
 
                 l1_idle += 4.5  #may be active still but probably not
                 l2_active += 4.5   
                 dram_idle += 4.5
 
+                #Miss --> DRAM access
                 if not hit:
-                    #DRAM access
                     # copy of data DRAM -> L2 and L2 -> DRAM on misses do not take extra time or extra active energy for the writes
                     if op != 1:
                         l1_idle += 45
@@ -228,7 +198,7 @@ def main(file_path, associativity):
     print(f'L2 Hit Rate: {l2_hits / l2_total * 100}%')
 
     print('Total Energy: ', total_energy / (10 ** 9), 'Joules')
-    print('Compulsory Misses: ', compulsoryCount)
+    
     return
 
 
