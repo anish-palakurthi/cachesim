@@ -1,5 +1,5 @@
 import random 
-
+import sys
 class cachesim:
 
     def __init__(self, c, bs, a):
@@ -87,7 +87,7 @@ class cachesim:
             else:
                 # print("--------------", tag_bits, self.cache[set_bits][0], self.cache[set_bits + 1][0], self.cache[set_bits + 2][0], self.cache[set_bits + 3][0])
 
-                print("Eviction from L2")
+                # print("Eviction from L2")
                 randomVal = random.randint(0, self.associativity - 1)
                 idx = set_bits + randomVal
                 dirty = self.cache[idx][1]
@@ -205,7 +205,10 @@ import os
 
 if __name__ == '__main__':
 
-        
-    main("Spec_Benchmark/008.espresso.din")
+    for arg in sys.argv[1:]:
+        print(f'Running {arg}')
+        main(arg)
+        print('---------------------------------\n')
+    
         
 
