@@ -1,0 +1,7 @@
+# Cache Simulator
+
+## Usage Instruction
+
+Run the run.sh file located in the manualSim directory to output for all 15 test cases for associativites 2, 4, and 8
+To run a single test, run cachesim.py with the dinero trace file path as a parameter in the command line
+

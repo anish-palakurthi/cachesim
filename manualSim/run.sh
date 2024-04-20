@@ -1,4 +1,4 @@
- /usr/bin/python3 /Users/anishpalakurthi/Desktop/dineroProj/manualSim/cachesim.py \
+ /usr/bin/python3 cachesim.py \
     Spec_Benchmark/008.espresso.din \
     Spec_Benchmark/013.spice2g6.din \
     Spec_Benchmark/015.doduc.din \

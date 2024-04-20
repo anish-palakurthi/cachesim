@@ -7,9 +7,7 @@ class cachesim:
         self.capacity = c
         self.block_size = bs
         self.associativity = a
-        
         self.sets = c // (bs * a)
-
         self.blocks = c // bs
         
         # Calculate masks and offsets needed
@@ -20,7 +18,7 @@ class cachesim:
         # Cache array with tag, dirty, valid for each block
         self.cache = [[0, False, False] for _ in range(self.blocks)]
 
-        print(f'Sets: {self.sets}; Blocks: {self.blocks}; Set Mask: {self.set_mask}; Set Offset: {self.set_offset}; Tag Offset: {self.tag_offset}')
+        # print(f'Sets: {self.sets}; Blocks: {self.blocks}; Set Mask: {self.set_mask}; Set Offset: {self.set_offset}; Tag Offset: {self.tag_offset}')
 
     def count_bits(self, n):
         count = 0
@@ -62,7 +60,7 @@ class cachesim:
         hit = dirty = False
         compulsory = False
         #calculate set and tag bits
-        set_bits = ((address >> self.set_offset) & self.set_mask) * 4
+        set_bits = ((address >> self.set_offset) & self.set_mask) * self.associativity
         tag_bits = (address >> self.tag_offset)
         # Iterate through cache set
         invalid_block = -1
@@ -87,9 +85,7 @@ class cachesim:
                 compulsory = True
             # Eviction
             else:
-                # print("--------------", tag_bits, self.cache[set_bits][0], self.cache[set_bits + 1][0], self.cache[set_bits + 2][0], self.cache[set_bits + 3][0])
 
-                # print("Eviction from L2")
                 randomVal = random.randint(0, self.associativity - 1)
                 idx = set_bits + randomVal
                 dirty = self.cache[idx][1]
@@ -98,11 +94,11 @@ class cachesim:
         return [hit, dirty, compulsory] 
 
 
-def main(file_path):
+def main(file_path, associativity):
     
     l1Data = cachesim(32768, 64, 1)
     l1Instructions = cachesim(32768, 64, 1)
-    l2 = cachesim(262144, 64, 4)
+    l2 = cachesim(262144, 64, associativity)
 
     # All measured in ns, penalty in pj
     l1_idle = l1_active = l2_idle = l2_active = dram_idle = dram_active = penalty = 0
@@ -143,11 +139,6 @@ def main(file_path):
             # Writeback to L2 and DRAM if dirty eviction
             if dirty:
                 penalty += 640 if op != 1 else 0 # from l1-dram
-                # Async time for L2 and DRAM access
-                # l1_idle += 50
-                # l2_active += 5
-                # l2_idle += 45
-                # dram_active += 50
                 
                 hit, dirty, compulsory = l2.cache_access_l2(1, evicted)
                 if compulsory:
@@ -194,12 +185,9 @@ def main(file_path):
 
     total_energy = penalty / 1000 + l1_idle * 0.5 + l1_active + l2_idle * 0.8 + l2_active * 2 + dram_idle + 0.8 + dram_active * 4
     
-    print(f'L1 Idle: {l1_idle} ns; L1 Active: {l1_active} ns; L1 Total: {l1_idle + l1_active} ns')
-    print(f'L2 Idle: {l2_idle} ns; L2 Active: {l2_active} ns; L2 Total: {l2_idle + l2_active} ns')
-    print(f'DRAM Idle: {dram_idle} ns; DRAM Active: {dram_active} ns; DRAM Total: {dram_idle + dram_active} ns')
+
     print(f'L1 Instruction Hit Rate: {l1_instruction_hits / l1_instruction_total * 100}%')
     print(f'L1 Data Hit Rate: {l1_data_hits / l1_data_total * 100}%')
-    print(f'L1 Total Hit Rate: {(l1_instruction_hits + l1_data_hits) / (l1_instruction_total + l1_data_total) * 100}%')
     print(f'L2 Hit Rate: {l2_hits / l2_total * 100}%')
 
     print('Total Energy: ', total_energy / (10 ** 9), 'Joules')
@@ -213,8 +201,10 @@ import os
 if __name__ == '__main__':
 
     for arg in sys.argv[1:]:
-        print(f'Running {arg}')
-        main(arg)
+        for assoc in [2,4,8]:
+            print(f'Running {arg} with associativity {assoc}')
+            main(arg, assoc)
+            print('------\n')
         print('---------------------------------\n')
     
         
