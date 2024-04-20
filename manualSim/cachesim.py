@@ -75,6 +75,8 @@ class cachesim:
                 if op == 1:
                     self.cache[i][1] = True
                 break
+        
+        
         # Cache miss
         else:
             # print(address, tag_bits)
@@ -135,13 +137,12 @@ def main(file_path):
 
             l1_active += 0.5
             l2_active += 0.5
-            penalty += 5 # from l1-l
             dram_idle += 0.5
-            
+            penalty += 5 if op != 1 else 0
+
             # Writeback to L2 and DRAM if dirty eviction
             if dirty:
-                penalty += 5 # from l1-l2
-                penalty += 640 # from l1-dram
+                penalty += 640 if op != 1 else 0 # from l1-dram
                 # Async time for L2 and DRAM access
                 # l1_idle += 50
                 # l2_active += 5
@@ -165,6 +166,7 @@ def main(file_path):
 
                 if hit:
                     l2_hits += 1
+
                 l2_total += 1
 
                 l1_idle += 4.5  #may be active still but probably not
@@ -173,18 +175,23 @@ def main(file_path):
 
                 if not hit:
                     #DRAM access
-                    l1_idle += 50
-                    l2_idle += 50
-                    dram_active += 50
+                    # copy of data DRAM -> L2 and L2 -> DRAM on misses do not take extra time or extra active energy for the writes
+                    if op != 1:
+                        l1_idle += 45
+                        l2_idle += 45
+                        dram_active += 45
+                    # Penalty applied for all DRAM access including writes
                     penalty += 640
             
                     if dirty:
-                        # Writeback to DRAM
+                        #remove from static add to active
+                        dram_idle -= 45
+                        dram_active += 45
+
+                        # Writeback to DRAM (penalties apply for writeback assumption)
                         penalty += 640
-                        # l1_idle += 50
-                        # l2_idle += 50
-                        # dram_active += 50
-        # print(l2.cache)
+
+
     total_energy = penalty / 1000 + l1_idle * 0.5 + l1_active + l2_idle * 0.8 + l2_active * 2 + dram_idle + 0.8 + dram_active * 4
     
     print(f'L1 Idle: {l1_idle} ns; L1 Active: {l1_active} ns; L1 Total: {l1_idle + l1_active} ns')
