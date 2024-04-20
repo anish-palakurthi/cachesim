@@ -183,7 +183,8 @@ def main(file_path, associativity):
                         # Writeback to DRAM (penalties apply for writeback assumption)
                         penalty += 640
 
-
+    l1Energy = l1_idle * 0.5 + l1_active
+    l2Energy = l2_idle * 0.8 + l2_active * 2
     total_energy = penalty / 1000 + l1_idle * 0.5 + l1_active + l2_idle * 0.8 + l2_active * 2 + dram_idle + 0.8 + dram_active * 4
     
 
@@ -198,8 +199,8 @@ def main(file_path, associativity):
     # print('Compulsory Misses: ', compulsoryCount)
 
     #for all params, use this
-    # return [dram_idle + dram_active, l1_instruction_hit_rate, l1_data_hit_rate, l2_hit_rate, total_energy / (10 ** 9)]
-    return [total_energy / (10 ** 9), dram_idle + dram_active]
+    return [dram_idle + dram_active, l1_instruction_hit_rate, l1_data_hit_rate, l2_hit_rate, total_energy / (10 ** 9), l1Energy, l2Energy]
+    # return [total_energy / (10 ** 9), dram_idle + dram_active]
 
 
 
@@ -213,20 +214,38 @@ if __name__ == '__main__':
 
     for arg in sys.argv[1:]:
         for assoc in [2, 4, 8]:
-            energies, times = [], []
+            energies, times, = [], []
+            l1_instruction_hit_rates, l1_data_hit_rates, l2_hit_rates, l1Energies, l2Energies = [], [], [] , [], []
             
             for _ in range(10):
-                energy, time = main(arg, assoc)
+                time, l1_I_HR, l1_D_HR, l2_HR, energy, l1Energy, l2Energy = main(arg, assoc)
                 energies.append(energy)
                 times.append(time)
+                l1_instruction_hit_rates.append(l1_I_HR)
+                l1_data_hit_rates.append(l1_D_HR)
+                l2_hit_rates.append(l2_HR)
+                l1Energies.append(l1Energy)
+                l2Energies.append(l2Energy)
             
             meanEnergy = sum(energies) / 10
             meanTime = sum(times) / 10
+            meanL1InstructionHitRate = sum(l1_instruction_hit_rates) / 10
+            meanL1DataHitRate = sum(l1_data_hit_rates) / 10
+            meanL2HitRate = sum(l2_hit_rates) / 10
+            meanL1Energy = sum(l1Energies) / 10
+            meanL2Energy = sum(l2Energies) / 10
+
             stddevEnergy = standard_deviation(energies)
             stddevTime = standard_deviation(times)
+            stddevL1InstructionHitRate = standard_deviation(l1_instruction_hit_rates)
+            stddevL1DataHitRate = standard_deviation(l1_data_hit_rates)
+            stddevL2HitRate = standard_deviation(l2_hit_rates)
+            stddevL1Energy = standard_deviation(l1Energies)
+            stddevL2Energy = standard_deviation(l2Energies)
 
+            #adjust writeout to meet data needs
             with open('results.txt', 'a') as file:
-                file.write(f'Test: {arg}; Assoc: {assoc}; Mean Energy: {meanEnergy}; StdDev Energy: {stddevEnergy}; Mean Time: {meanTime}; StdDev Time: {stddevTime}\n')
+                file.write(f'Test: {arg}; Assoc: {assoc}; Mean Energy: {meanEnergy}; StdDev Energy: {stddevEnergy}; Mean Time: {meanTime}; StdDev Time: {stddevTime};\n')
 
 
         

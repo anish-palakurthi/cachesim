@@ -27,26 +27,38 @@ class cachesim:
             n >>= 1
         return count
 
+    #logic for l1 cache access
     def cache_access_l1(self, op, address):
-        hit = dirty = False
-        compulsory = False
+        hit = dirty = compulsory = False
         evicted = None
-        #calculate set and tag bits
+
+        #shift set bits all the way to the right and mask tag bits(remaining) to get set bits
         set_bits = (address >> self.set_offset) & self.set_mask
+
+        #shift tag bits all the way to the right to get tag bits
         tag_bits = (address >> self.tag_offset)
         
+        #hit
         if self.cache[set_bits][0] == tag_bits:
             hit = True
+            
             #if it is a write, mark dirty
             if op == 1:
                 self.cache[set_bits][1] = True
+        
+        #miss
         else:
+            #not valid block
             if self.cache[set_bits][0] == 0:
                 compulsory = True
+            
+            #get dirty status
             dirty = self.cache[set_bits][1]
+
+            #reconstruct evicted address by shifting tag bits to the left and adding set bits via OR
             evicted = self.cache[set_bits][0] << self.tag_offset | set_bits << self.set_offset
-            #code for cache miss
-            #evict
+            
+            #update block tag bits to reflect new tag bits
             self.cache[set_bits][0] = tag_bits
         
         # Mark valid
@@ -56,40 +68,65 @@ class cachesim:
         #runner file should perform calculations based on the output
         return [hit, dirty, compulsory, evicted]
 
+
+    #logic for l2 cache access
     def cache_access_l2(self, op, address):
         hit = dirty = False
         compulsory = False
+
         #calculate set and tag bits
         set_bits = ((address >> self.set_offset) & self.set_mask) * self.associativity
         tag_bits = (address >> self.tag_offset)
+
+
         # Iterate through cache set
         invalid_block = -1
         for i in range(set_bits, set_bits + self.associativity):
+
+            #find last invalid block in set
             if not self.cache[i][2]:
                 invalid_block = i
+
             # Cache hit
             elif self.cache[i][0] == tag_bits:
                 hit = True
+
+                #if it is a write, mark dirty
                 if op == 1:
                     self.cache[i][1] = True
                 break
         
         
-        # Cache miss
+        # Cache miss (loop did not break)
         else:
-            # print(address, tag_bits)
-            # Compulsory miss
+
+            # Compulsory miss -- found an invalid block and no hit
             if invalid_block >= 0:
+
+                #update tag bits to reflect new address
                 self.cache[invalid_block][0] = tag_bits
+
+                #mark block as valid
                 self.cache[invalid_block][2] = True
+
+                #indicate a compulsory miss happened
                 compulsory = True
-            # Eviction
+
+
+            # Eviction -- no invalid blocks, so random replacement
             else:
 
+                #calculate random index in set to evict
                 randomVal = random.randint(0, self.associativity - 1)
                 idx = set_bits + randomVal
+
+                #get dirty status to see if writeback is needed
                 dirty = self.cache[idx][1]
+
+                #update tag bits to reflect new address
                 self.cache[idx][0] = tag_bits
+
+
         #runner file should perform calculations based on the output
         return [hit, dirty, compulsory] 
 
@@ -194,7 +231,7 @@ def main(file_path, associativity):
     print('Compulsory Misses: ', compulsoryCount)
     return
 
-import os
+
 
 
 
