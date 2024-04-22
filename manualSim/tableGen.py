@@ -1,8 +1,8 @@
 import math
 import random 
-import sys
-import pandas
 
+import pandas as pd
+import os
 class cachesim:
 
     def __init__(self, c, bs, a):
@@ -212,12 +212,41 @@ def standard_deviation(data):
     return math.sqrt(sum((x - mean) ** 2 for x in data) / N)
 
 
-if __name__ == '__main__':
 
-    for arg in sys.argv[1:]:
+
+# After all simulations
+if __name__ == '__main__':
+    results = []
+    headers = ['Filename', 'Associativity', 'Mean Energy (J)', 'StdDev Energy (J)',
+               'Mean Time (s)', 'StdDev Time (s)', 'Mean L1 Instruction Hit Rate (%)', 
+               'StdDev L1 Instruction Hit Rate (%)', 'Mean L1 Data Hit Rate (%)',
+               'StdDev L1 Data Hit Rate (%)', 'Mean L2 Hit Rate (%)', 'StdDev L2 Hit Rate (%)',
+               'Mean L1 Energy (J)', 'StdDev L1 Energy (J)', 'Mean L2 Energy (J)', 'StdDev L2 Energy (J)']
+
+    base_dir = os.path.join(os.getcwd(), 'manualSim', 'Spec_Benchmark')
+
+    files = [
+        os.path.join(base_dir, '008.espresso.din'),
+        os.path.join(base_dir, '013.spice2g6.din'),
+        os.path.join(base_dir, '015.doduc.din'),
+        os.path.join(base_dir, '022.li.din'),
+        os.path.join(base_dir, '023.eqntott.din'),
+        os.path.join(base_dir, '026.compress.din'),
+        os.path.join(base_dir, '034.mdljdp2.din'),
+        os.path.join(base_dir, '039.wave5.din'),
+        os.path.join(base_dir, '047.tomcatv.din'),
+        os.path.join(base_dir, '048.ora.din'),
+        os.path.join(base_dir, '085.gcc.din'),
+        os.path.join(base_dir, '089.su2cor.din'),
+        os.path.join(base_dir, '090.hydro2d.din'),
+        os.path.join(base_dir, '093.nasa7.din'),
+        os.path.join(base_dir, '094.fpppp.din')
+]
+    for arg in files:
         for assoc in [2, 4, 8]:
-            energies, times, = [], []
-            l1_instruction_hit_rates, l1_data_hit_rates, l2_hit_rates, l1Energies, l2Energies = [], [], [] , [], []
+            # Assume `main` function and other necessary parts are defined as shown above
+            # Collecting data in lists
+            energies, times, l1_instruction_hit_rates, l1_data_hit_rates, l2_hit_rates, l1Energies, l2Energies = [], [], [], [], [], [], []
             
             for _ in range(10):
                 time, l1_I_HR, l1_D_HR, l2_HR, energy, l1Energy, l2Energy = main(arg, assoc)
@@ -229,6 +258,7 @@ if __name__ == '__main__':
                 l1Energies.append(l1Energy)
                 l2Energies.append(l2Energy)
             
+            # Calculating mean and stddev
             meanEnergy = sum(energies) / 10
             meanTime = sum(times) / 10
             meanL1InstructionHitRate = sum(l1_instruction_hit_rates) / 10
@@ -245,17 +275,16 @@ if __name__ == '__main__':
             stddevL1Energy = standard_deviation(l1Energies)
             stddevL2Energy = standard_deviation(l2Energies)
 
-            #adjust writeout to meet data needs
-            with open('results.txt', 'a') as file:
-                file.write(f'Test: {arg}; Assoc: {assoc}; Mean Energy: {meanEnergy}J; StdDev Energy: {stddevEnergy}J;\n')
-                file.write(f'Mean Time: {meanTime}s; StdDev Time: {stddevTime}s;\n') 
-                file.write(f'Mean L1 Instruction Hit Rate: {meanL1InstructionHitRate}%; StdDev L1 Instruction Hit Rate: {stddevL1InstructionHitRate}%\n')
-                file.write(f'Mean L1 Data Hit Rate: {meanL1DataHitRate}%; StdDev L1 Data Hit Rate: {stddevL1DataHitRate}%\n')
-                file.write(f'Mean L2 Hit Rate: {meanL2HitRate}%; StdDev L2 Hit Rate: {stddevL2HitRate}%\n')
-                file.write(f'Mean L1 Energy: {meanL1Energy}J; StdDev L1 Energy: {stddevL1Energy}J\n')
-                file.write(f'Mean L2 Energy: {meanL2Energy}J; StdDev L2 Energy: {stddevL2Energy}J\n')
-                file.write('\n')
+            # Store results in list for DataFrame
+            results.append([
+                arg, assoc, meanEnergy, stddevEnergy, meanTime, stddevTime,
+                meanL1InstructionHitRate, stddevL1InstructionHitRate, meanL1DataHitRate,
+                stddevL1DataHitRate, meanL2HitRate, stddevL2HitRate, meanL1Energy, stddevL1Energy,
+                meanL2Energy, stddevL2Energy
+            ])
 
+    # Create DataFrame
+    df = pd.DataFrame(results, columns=headers)
 
-        
-
+    # Export to Excel
+    df.to_excel('manualSim/simulation_results.xlsx', index=False)
