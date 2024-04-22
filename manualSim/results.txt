@@ -1,8 +1,0 @@
-Test: Spec_Benchmark/008.espresso.din; Assoc: 2; Mean Energy: 0.002140783026J; StdDev Energy: 4.4202224827376273e-07J;
-Mean Time: 528723.95s; StdDev Time: 27.03372893257606s;
-Mean L1 Instruction Hit Rate: 99.78983602020342%; StdDev L1 Instruction Hit Rate: 1.4210854715202004e-14%
-Mean L1 Data Hit Rate: 99.474379957195%; StdDev L1 Data Hit Rate: 1.4210854715202004e-14%
-Mean L2 Hit Rate: 72.61293462699548%; StdDev L2 Hit Rate: 0.12363521103277479%
-Mean L1 Energy: 514361.975J; StdDev L1 Energy: 13.51686446628803J
-Mean L2 Energy: 1034681.5J; StdDev L2 Energy: 29.370903969745296J
-

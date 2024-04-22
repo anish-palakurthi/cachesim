@@ -26,6 +26,21 @@ class cachesim:
             count += n & 1
             n >>= 1
         return count
+    
+    def invalidate(self, address):
+        set_bits = ((address >> self.set_offset) & self.set_mask) * self.associativity
+        tag_bits = (address >> self.tag_offset)
+
+
+        # Iterate through cache set
+        for i in range(set_bits, set_bits + self.associativity):
+
+            #find valid match if exists
+            if not self.cache[i][2] and self.cache[i][0] == tag_bits:
+                self.cache[i][2] = False
+                break
+        return
+    
 
     #logic for cache access
     def cache_access(self, op, address):
@@ -149,7 +164,13 @@ def main(file_path, associativity):
                 #writeback to L2 
                 hit, dirty, evicted = l2.cache_access(1, evicted)
 
+                # Asynchronous active time added
+                l2_active += 5
+                dram_active += 50
 
+                # Penalty applied for all DRAM access including writes
+                penalty += 640
+                
                 if hit:
                     l2_hits += 1
                 l2_total += 1
@@ -170,6 +191,7 @@ def main(file_path, associativity):
                 l2_active += 4.5   
                 dram_idle += 4.5
 
+
                 #Miss --> DRAM access
                 if not hit:
                     # copy of data DRAM -> L2 and L2 -> DRAM on misses do not take extra time or extra active energy for the writes
@@ -177,13 +199,16 @@ def main(file_path, associativity):
                         l1_idle += 45
                         l2_idle += 45
                         dram_active += 45
+
                     # Penalty applied for all DRAM access including writes
                     penalty += 640
-            
+
                     if dirty:
-                        #remove from static add to active
-                        dram_idle -= 45
-                        dram_active += 45
+                        # Invalidate block in L1 cache
+                        l1Data.invalidate(evicted)
+
+                        # Asynchronous active time added
+                        dram_active += 50
 
                         # Writeback to DRAM (penalties apply for writeback assumption)
                         penalty += 640
@@ -195,7 +220,7 @@ def main(file_path, associativity):
     print(f'L1 Instruction Hit Rate: {l1_instruction_hits / l1_instruction_total * 100}%')
     print(f'L1 Data Hit Rate: {l1_data_hits / l1_data_total * 100}%')
     print(f'L2 Hit Rate: {l2_hits / l2_total * 100}%')
-    print(f'Total Time: {dram_idle + dram_active} ns')
+    print(f'Total Time: {dram_idle + dram_active }  ns')
     print('Total Energy: ', total_energy / (10 ** 9), 'Joules')
     
     return

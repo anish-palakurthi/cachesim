@@ -202,7 +202,7 @@ def main(file_path, associativity):
     # print('Compulsory Misses: ', compulsoryCount)
 
     #for all params, use this
-    return [dram_idle + dram_active, l1_instruction_hit_rate, l1_data_hit_rate, l2_hit_rate, total_energy / (10 ** 9), l1Energy / (10 ** 9), l2Energy / (10 ** 9)]
+    return [dram_idle + dram_active / 10 ** 9, l1_instruction_hit_rate, l1_data_hit_rate, l2_hit_rate, total_energy / (10 ** 9), l1Energy / (10 ** 9), l2Energy / (10 ** 9)]
     # return [total_energy / (10 ** 9), dram_idle + dram_active]
 
 
@@ -261,7 +261,7 @@ if __name__ == '__main__':
             
             # Calculating mean and stddev
             meanEnergy = sum(energies) / 10
-            meanTime = sum(times) / 10
+            meanTime = sum(times) / 10 
             meanL1InstructionHitRate = sum(l1_instruction_hit_rates) / 10
             meanL1DataHitRate = sum(l1_data_hit_rates) / 10
             meanL2HitRate = sum(l2_hit_rates) / 10
@@ -269,7 +269,7 @@ if __name__ == '__main__':
             meanL2Energy = sum(l2Energies) / 10
 
             stddevEnergy = standard_deviation(energies)
-            stddevTime = standard_deviation(times)
+            stddevTime = standard_deviation(times) 
             stddevL1InstructionHitRate = standard_deviation(l1_instruction_hit_rates)
             stddevL1DataHitRate = standard_deviation(l1_data_hit_rates)
             stddevL2HitRate = standard_deviation(l2_hit_rates)
@@ -288,4 +288,4 @@ if __name__ == '__main__':
     df = pd.DataFrame(results, columns=headers)
 
     # Export to Excel
-    df.to_excel('manualSim/simulation_results.xlsx', index=False)
+    df.to_excel('simulation_results.xlsx', index=False)
