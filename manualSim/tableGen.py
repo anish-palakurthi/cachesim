@@ -202,7 +202,7 @@ def main(file_path, associativity):
     # print('Compulsory Misses: ', compulsoryCount)
 
     #for all params, use this
-    return [dram_idle + dram_active, l1_instruction_hit_rate, l1_data_hit_rate, l2_hit_rate, total_energy / (10 ** 9), l1Energy, l2Energy]
+    return [dram_idle + dram_active, l1_instruction_hit_rate, l1_data_hit_rate, l2_hit_rate, total_energy / (10 ** 9), l1Energy / (10 ** 9), l2Energy / (10 ** 9)]
     # return [total_energy / (10 ** 9), dram_idle + dram_active]
 
 

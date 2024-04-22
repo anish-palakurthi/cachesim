@@ -195,7 +195,7 @@ def main(file_path, associativity):
     print(f'L1 Instruction Hit Rate: {l1_instruction_hits / l1_instruction_total * 100}%')
     print(f'L1 Data Hit Rate: {l1_data_hits / l1_data_total * 100}%')
     print(f'L2 Hit Rate: {l2_hits / l2_total * 100}%')
-
+    print(f'Total Time: {dram_idle + dram_active} ns')
     print('Total Energy: ', total_energy / (10 ** 9), 'Joules')
     
     return
