@@ -1,45 +1,8 @@
-Test: Spec_Benchmark/008.espresso.din; Assoc: 2; Mean Energy: 0.0021407832819999996; StdDev Energy: 2.7673202001382346e-07; Mean Time: 528723.95; StdDev Time: 22.896997619775387
-Test: Spec_Benchmark/008.espresso.din; Assoc: 4; Mean Energy: 0.0021398805150000004; StdDev Energy: 4.336808689942018e-19; Mean Time: 528678.5; StdDev Time: 0.0
-Test: Spec_Benchmark/008.espresso.din; Assoc: 8; Mean Energy: 0.0021398805150000004; StdDev Energy: 4.336808689942018e-19; Mean Time: 528678.5; StdDev Time: 0.0
-Test: Spec_Benchmark/013.spice2g6.din; Assoc: 2; Mean Energy: 0.0022043409900000008; StdDev Energy: 4.336808689942018e-19; Mean Time: 542139.0; StdDev Time: 0.0
-Test: Spec_Benchmark/013.spice2g6.din; Assoc: 4; Mean Energy: 0.0022043409900000008; StdDev Energy: 4.336808689942018e-19; Mean Time: 542139.0; StdDev Time: 0.0
-Test: Spec_Benchmark/013.spice2g6.din; Assoc: 8; Mean Energy: 0.0022043409900000008; StdDev Energy: 4.336808689942018e-19; Mean Time: 542139.0; StdDev Time: 0.0
-Test: Spec_Benchmark/015.doduc.din; Assoc: 2; Mean Energy: 0.0023713490559999994; StdDev Energy: 5.646512904828603e-07; Mean Time: 576511.7; StdDev Time: 66.87308875773573
-Test: Spec_Benchmark/015.doduc.din; Assoc: 4; Mean Energy: 0.002369384873; StdDev Energy: 6.111741437601798e-07; Mean Time: 576349.25; StdDev Time: 75.65489078704694
-Test: Spec_Benchmark/015.doduc.din; Assoc: 8; Mean Energy: 0.0023670412799999996; StdDev Energy: 0.0; Mean Time: 576045.5; StdDev Time: 0.0
-Test: Spec_Benchmark/022.li.din; Assoc: 2; Mean Energy: 0.0021824644360000003; StdDev Energy: 1.086278350124425e-06; Mean Time: 537423.95; StdDev Time: 188.26410305738054
-Test: Spec_Benchmark/022.li.din; Assoc: 4; Mean Energy: 0.0021733006850000003; StdDev Energy: 0.0; Mean Time: 536352.5; StdDev Time: 0.0
-Test: Spec_Benchmark/022.li.din; Assoc: 8; Mean Energy: 0.0021733006850000003; StdDev Energy: 0.0; Mean Time: 536352.5; StdDev Time: 0.0
-Test: Spec_Benchmark/023.eqntott.din; Assoc: 2; Mean Energy: 0.0020874387150000002; StdDev Energy: 0.0; Mean Time: 517289.0; StdDev Time: 0.0
-Test: Spec_Benchmark/023.eqntott.din; Assoc: 4; Mean Energy: 0.0020874387150000002; StdDev Energy: 0.0; Mean Time: 517289.0; StdDev Time: 0.0
-Test: Spec_Benchmark/023.eqntott.din; Assoc: 8; Mean Energy: 0.0020874387150000002; StdDev Energy: 0.0; Mean Time: 517289.0; StdDev Time: 0.0
-Test: Spec_Benchmark/026.compress.din; Assoc: 2; Mean Energy: 0.002213285168; StdDev Energy: 2.085051374708895e-06; Mean Time: 528992.6; StdDev Time: 272.0234181095444
-Test: Spec_Benchmark/026.compress.din; Assoc: 4; Mean Energy: 0.002221967028; StdDev Energy: 2.9234143007408206e-06; Mean Time: 530223.8; StdDev Time: 399.76212927189596
-Test: Spec_Benchmark/026.compress.din; Assoc: 8; Mean Energy: 0.002197342305; StdDev Energy: 3.2805177836562646e-06; Mean Time: 530700.35; StdDev Time: 504.3656932226854
-Test: Spec_Benchmark/034.mdljdp2.din; Assoc: 2; Mean Energy: 0.002196407998; StdDev Energy: 1.6603549577118375e-07; Mean Time: 538493.0; StdDev Time: 22.045407685048602
-Test: Spec_Benchmark/034.mdljdp2.din; Assoc: 4; Mean Energy: 0.00219609455; StdDev Energy: 0.0; Mean Time: 538475.0; StdDev Time: 0.0
-Test: Spec_Benchmark/034.mdljdp2.din; Assoc: 8; Mean Energy: 0.00219609455; StdDev Energy: 0.0; Mean Time: 538475.0; StdDev Time: 0.0
-Test: Spec_Benchmark/039.wave5.din; Assoc: 2; Mean Energy: 0.002120679545; StdDev Energy: 0.0; Mean Time: 522963.5; StdDev Time: 0.0
-Test: Spec_Benchmark/039.wave5.din; Assoc: 4; Mean Energy: 0.002120679545; StdDev Energy: 0.0; Mean Time: 522963.5; StdDev Time: 0.0
-Test: Spec_Benchmark/039.wave5.din; Assoc: 8; Mean Energy: 0.002120679545; StdDev Energy: 0.0; Mean Time: 522963.5; StdDev Time: 0.0
-Test: Spec_Benchmark/047.tomcatv.din; Assoc: 2; Mean Energy: 0.0022839740610000004; StdDev Energy: 3.4294709594722723e-06; Mean Time: 528467.9; StdDev Time: 270.2009252389784
-Test: Spec_Benchmark/047.tomcatv.din; Assoc: 4; Mean Energy: 0.002291290774; StdDev Energy: 2.151171846150099e-06; Mean Time: 527927.45; StdDev Time: 256.4087995759896
-Test: Spec_Benchmark/047.tomcatv.din; Assoc: 8; Mean Energy: 0.002296058442; StdDev Energy: 3.49122532941093e-06; Mean Time: 527922.05; StdDev Time: 250.84382093246785
-Test: Spec_Benchmark/048.ora.din; Assoc: 2; Mean Energy: 0.0020993857199999998; StdDev Energy: 0.0; Mean Time: 518667.0; StdDev Time: 0.0
-Test: Spec_Benchmark/048.ora.din; Assoc: 4; Mean Energy: 0.0020993857199999998; StdDev Energy: 0.0; Mean Time: 518667.0; StdDev Time: 0.0
-Test: Spec_Benchmark/048.ora.din; Assoc: 8; Mean Energy: 0.0020993857199999998; StdDev Energy: 0.0; Mean Time: 518667.0; StdDev Time: 0.0
-Test: Spec_Benchmark/085.gcc.din; Assoc: 2; Mean Energy: 0.002538515995; StdDev Energy: 2.624129507516739e-06; Mean Time: 618762.2; StdDev Time: 459.0979307293815
-Test: Spec_Benchmark/085.gcc.din; Assoc: 4; Mean Energy: 0.0024767778089999997; StdDev Energy: 1.8400430567201142e-06; Mean Time: 609152.9; StdDev Time: 250.37799424070798
-Test: Spec_Benchmark/085.gcc.din; Assoc: 8; Mean Energy: 0.002473438607; StdDev Energy: 1.3180573557839401e-06; Mean Time: 608698.4; StdDev Time: 205.94863437274842
-Test: Spec_Benchmark/089.su2cor.din; Assoc: 2; Mean Energy: 0.0021600911010000003; StdDev Energy: 6.934250763017516e-07; Mean Time: 531028.4; StdDev Time: 68.06166321799665
-Test: Spec_Benchmark/089.su2cor.din; Assoc: 4; Mean Energy: 0.002154789763; StdDev Energy: 2.3336387984433074e-07; Mean Time: 530811.5; StdDev Time: 0.0
-Test: Spec_Benchmark/089.su2cor.din; Assoc: 8; Mean Energy: 0.002153134955; StdDev Energy: 0.0; Mean Time: 530811.5; StdDev Time: 0.0
-Test: Spec_Benchmark/090.hydro2d.din; Assoc: 2; Mean Energy: 0.00240406047; StdDev Energy: 2.870372868438102e-06; Mean Time: 566640.95; StdDev Time: 365.2739006553849
-Test: Spec_Benchmark/090.hydro2d.din; Assoc: 4; Mean Energy: 0.002379079474; StdDev Energy: 2.8087075921550963e-06; Mean Time: 563184.95; StdDev Time: 509.17037669133896
-Test: Spec_Benchmark/090.hydro2d.din; Assoc: 8; Mean Energy: 0.002379694781; StdDev Energy: 5.890808099665394e-06; Mean Time: 564310.4; StdDev Time: 827.1675706892771
-Test: Spec_Benchmark/093.nasa7.din; Assoc: 2; Mean Energy: 0.002116683287; StdDev Energy: 7.950864618743228e-07; Mean Time: 522851.0; StdDev Time: 0.0
-Test: Spec_Benchmark/093.nasa7.din; Assoc: 4; Mean Energy: 0.002112614087; StdDev Energy: 2.7665240272945166e-07; Mean Time: 522851.0; StdDev Time: 0.0
-Test: Spec_Benchmark/093.nasa7.din; Assoc: 8; Mean Energy: 0.002110850767; StdDev Energy: 1.015036815884861e-07; Mean Time: 522851.0; StdDev Time: 0.0
-Test: Spec_Benchmark/094.fpppp.din; Assoc: 2; Mean Energy: 0.0023728961249999993; StdDev Energy: 1.9785795376835554e-06; Mean Time: 579941.6; StdDev Time: 328.4926026564373
-Test: Spec_Benchmark/094.fpppp.din; Assoc: 4; Mean Energy: 0.002339806219; StdDev Energy: 5.325135521880476e-07; Mean Time: 576058.1; StdDev Time: 68.44735203059355
-Test: Spec_Benchmark/094.fpppp.din; Assoc: 8; Mean Energy: 0.0023387104250000004; StdDev Energy: 4.336808689942018e-19; Mean Time: 575987.0; StdDev Time: 0.0
+Test: Spec_Benchmark/008.espresso.din; Assoc: 2; Mean Energy: 0.002140783026J; StdDev Energy: 4.4202224827376273e-07J;
+Mean Time: 528723.95s; StdDev Time: 27.03372893257606s;
+Mean L1 Instruction Hit Rate: 99.78983602020342%; StdDev L1 Instruction Hit Rate: 1.4210854715202004e-14%
+Mean L1 Data Hit Rate: 99.474379957195%; StdDev L1 Data Hit Rate: 1.4210854715202004e-14%
+Mean L2 Hit Rate: 72.61293462699548%; StdDev L2 Hit Rate: 0.12363521103277479%
+Mean L1 Energy: 514361.975J; StdDev L1 Energy: 13.51686446628803J
+Mean L2 Energy: 1034681.5J; StdDev L2 Energy: 29.370903969745296J
+

@@ -208,11 +208,11 @@ def main(file_path, associativity):
 if __name__ == '__main__':
 
     for arg in sys.argv[1:]:
-        for assoc in [2,4,8]:
-            print(f'Running {arg} with associativity {assoc}')
-            main(arg, assoc)
-            print('------\n')
-        print('---------------------------------\n')
+        # for assoc in [2,4,8]:
+        print(f'Running {arg} with associativity {2}')
+        main(arg, 2)
+        print('------\n')
+        # print('---------------------------------\n')
     
         
 

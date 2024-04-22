@@ -1,6 +1,8 @@
 import math
 import random 
 import sys
+import pandas
+
 class cachesim:
 
     def __init__(self, c, bs, a):
@@ -245,7 +247,14 @@ if __name__ == '__main__':
 
             #adjust writeout to meet data needs
             with open('results.txt', 'a') as file:
-                file.write(f'Test: {arg}; Assoc: {assoc}; Mean Energy: {meanEnergy}; StdDev Energy: {stddevEnergy}; Mean Time: {meanTime}; StdDev Time: {stddevTime};\n')
+                file.write(f'Test: {arg}; Assoc: {assoc}; Mean Energy: {meanEnergy}J; StdDev Energy: {stddevEnergy}J;\n')
+                file.write(f'Mean Time: {meanTime}s; StdDev Time: {stddevTime}s;\n') 
+                file.write(f'Mean L1 Instruction Hit Rate: {meanL1InstructionHitRate}%; StdDev L1 Instruction Hit Rate: {stddevL1InstructionHitRate}%\n')
+                file.write(f'Mean L1 Data Hit Rate: {meanL1DataHitRate}%; StdDev L1 Data Hit Rate: {stddevL1DataHitRate}%\n')
+                file.write(f'Mean L2 Hit Rate: {meanL2HitRate}%; StdDev L2 Hit Rate: {stddevL2HitRate}%\n')
+                file.write(f'Mean L1 Energy: {meanL1Energy}J; StdDev L1 Energy: {stddevL1Energy}J\n')
+                file.write(f'Mean L2 Energy: {meanL2Energy}J; StdDev L2 Energy: {stddevL2Energy}J\n')
+                file.write('\n')
 
 
         
