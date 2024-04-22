@@ -30,72 +30,67 @@ class cachesim:
             n >>= 1
         return count
 
-    def cache_access_l1(self, op, address):
+    #logic for cache access
+    def cache_access(self, op, address):
         hit = dirty = False
-        compulsory = False
         evicted = None
-        #calculate set and tag bits
-        set_bits = (address >> self.set_offset) & self.set_mask
-        tag_bits = (address >> self.tag_offset)
-        
-        if self.cache[set_bits][0] == tag_bits:
-            hit = True
-            #if it is a write, mark dirty
-            if op == 1:
-                self.cache[set_bits][1] = True
-        else:
-            if self.cache[set_bits][0] == 0:
-                compulsory = True
-            dirty = self.cache[set_bits][1]
-            evicted = self.cache[set_bits][0] << self.tag_offset | set_bits << self.set_offset
-            #code for cache miss
-            #evict
-            self.cache[set_bits][0] = tag_bits
-        
-        # Mark valid
-        self.cache[set_bits][2] = True
 
-
-        #runner file should perform calculations based on the output
-        return [hit, dirty, compulsory, evicted]
-
-    def cache_access_l2(self, op, address):
-        hit = dirty = False
-        compulsory = False
         #calculate set and tag bits
         set_bits = ((address >> self.set_offset) & self.set_mask) * self.associativity
         tag_bits = (address >> self.tag_offset)
+
+
         # Iterate through cache set
         invalid_block = -1
         for i in range(set_bits, set_bits + self.associativity):
+
+            #find last invalid block in set
             if not self.cache[i][2]:
                 invalid_block = i
+
             # Cache hit
             elif self.cache[i][0] == tag_bits:
                 hit = True
+
+                #if it is a write, mark dirty
                 if op == 1:
                     self.cache[i][1] = True
                 break
         
         
-        # Cache miss
+        # Cache miss (loop did not break)
         else:
-            # print(address, tag_bits)
-            # Compulsory miss
+
+            # Compulsory miss -- found an invalid block and no hit
             if invalid_block >= 0:
+
+                #update tag bits to reflect new address
                 self.cache[invalid_block][0] = tag_bits
+
+                #mark block as valid
                 self.cache[invalid_block][2] = True
-                compulsory = True
-            # Eviction
+
+
+
+            # Eviction -- no invalid blocks, so random replacement
             else:
 
+                #calculate random index in set to evict
                 randomVal = random.randint(0, self.associativity - 1)
                 idx = set_bits + randomVal
-                dirty = self.cache[idx][1]
-                self.cache[idx][0] = tag_bits
-        #runner file should perform calculations based on the output
-        return [hit, dirty, compulsory] 
 
+                #get dirty status to see if writeback is needed
+                dirty = self.cache[idx][1]
+
+                #reconstruct evicted address by shifting tag bits to the left and adding set bits via OR
+                evicted = self.cache[set_bits][0] << self.tag_offset | set_bits << self.set_offset
+
+                #update tag bits to reflect new address
+                self.cache[idx][0] = tag_bits
+
+
+        #runner file should perform calculations based on the output
+        return [hit, dirty, evicted] 
 
 def main(file_path, associativity):
     
@@ -109,66 +104,72 @@ def main(file_path, associativity):
     l1_instruction_hits = l1_instruction_total = 0
     l1_data_hits = l1_data_total = 0
     l2_hits = l2_total = 0
-    compulsoryCount = 0
-    compulsory = False
+
     evicted = 0
 
     with open(file_path, 'r') as f:
+
+        #read input line
         for line in f:
             hit = dirty = False
-            #parse line
+
+            #parse line to get operation and address
             line = line.split()
             op = int(line[0])
             address = int(line[1], 16)
 
+
             # L1 Access
+
+            # Instruction Cache
             if (op == 2):
-                hit, dirty, compulsory, evicted = l1Instructions.cache_access_l1(op, address)
+                hit, dirty, evicted = l1Instructions.cache_access(op, address)
                 if hit:
                     l1_instruction_hits += 1
                 l1_instruction_total += 1
+
+            # Data Cache
             else:
-                hit, dirty, compulsory, evicted = l1Data.cache_access_l1(op, address)
+                hit, dirty, evicted = l1Data.cache_access(op, address)
                 if hit:
                     l1_data_hits += 1
-                    
                 l1_data_total += 1
 
+            #costs of L1 access
             l1_active += 0.5
             l2_active += 0.5
             dram_idle += 0.5
-            penalty += 5 if op != 1 else 0
+            penalty += 5 if op != 1 else 0 #writes are handled below
 
             # Writeback to L2 and DRAM if dirty eviction
             if dirty:
-                penalty += 640 if op != 1 else 0 # from l1-dram
                 
-                hit, dirty, compulsory = l2.cache_access_l2(1, evicted)
-                if compulsory:
-                    compulsoryCount += 1
+                #writeback to L2 
+                hit, dirty, evicted = l2.cache_access(1, evicted)
+
 
                 if hit:
                     l2_hits += 1
                 l2_total += 1
 
-            # L1 Miss
+            # L1 Miss -- won't execute if dirty code above has executed, as dirty code only executes on dirty miss evict
             if not hit:
+
+
                 # Access L2
-                hit, dirty, compulsory = l2.cache_access_l2(op, address)
-                if compulsory:
-                    compulsoryCount += 1
+                hit, dirty, evicted = l2.cache_access(op, address)
+
 
                 if hit:
                     l2_hits += 1
-
                 l2_total += 1
 
                 l1_idle += 4.5  #may be active still but probably not
                 l2_active += 4.5   
                 dram_idle += 4.5
 
+                #Miss --> DRAM access
                 if not hit:
-                    #DRAM access
                     # copy of data DRAM -> L2 and L2 -> DRAM on misses do not take extra time or extra active energy for the writes
                     if op != 1:
                         l1_idle += 45
@@ -223,7 +224,7 @@ if __name__ == '__main__':
                'StdDev L1 Data Hit Rate (%)', 'Mean L2 Hit Rate (%)', 'StdDev L2 Hit Rate (%)',
                'Mean L1 Energy (J)', 'StdDev L1 Energy (J)', 'Mean L2 Energy (J)', 'StdDev L2 Energy (J)']
 
-    base_dir = os.path.join(os.getcwd(), 'manualSim', 'Spec_Benchmark')
+    base_dir = os.path.join(os.getcwd(), 'Spec_Benchmark')
 
     files = [
         os.path.join(base_dir, '008.espresso.din'),

@@ -145,7 +145,6 @@ def main(file_path, associativity):
 
             # Writeback to L2 and DRAM if dirty eviction
             if dirty:
-                penalty += 640 if op != 1 else 0 # cost of going to DRAM
                 
                 #writeback to L2 
                 hit, dirty, evicted = l2.cache_access(1, evicted)
