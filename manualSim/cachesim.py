@@ -114,13 +114,14 @@ def main(file_path, associativity):
 
 
     # All measured in ns, penalty in pj
-    l1_idle = l1_active = l2_idle = l2_active = dram_idle = dram_active = penalty = 0
+    l1_idle = l1i_active = l1d_active = l2_idle = l2_active = dram_idle = dram_active = 0
+    dram_penalty = l2_penalty = 0
 
     # Hit and total counters
     l1_instruction_hits = l1_instruction_total = 0
     l1_data_hits = l1_data_total = 0
     l2_hits = l2_total = 0
-
+    dram_accesses = 0
     # Eviction counter
     evicted = 0
 
@@ -145,6 +146,8 @@ def main(file_path, associativity):
                     l1_instruction_hits += 1
                 l1_instruction_total += 1
 
+                l1i_active += 0.5
+
             # Data Cache
             else:
                 hit, dirty, evicted = l1Data.cache_access(op, address)
@@ -152,11 +155,12 @@ def main(file_path, associativity):
                     l1_data_hits += 1
                 l1_data_total += 1
 
+                l1d_active += 0.5
+
             #costs of L1 access
-            l1_active += 0.5
             l2_active += 0.5
             dram_idle += 0.5
-            penalty += 5 if op != 1 else 0 #writes are handled below
+            l2_penalty += 5 if op != 1 else 0 #writes are handled below
 
             # Writeback to L2 and DRAM if dirty eviction
             if dirty:
@@ -169,8 +173,8 @@ def main(file_path, associativity):
                 dram_active += 50
 
                 # Penalty applied for all DRAM access including writes
-                penalty += 640
-                
+                dram_penalty += 640
+                dram_accesses += 1
                 if hit:
                     l2_hits += 1
                 l2_total += 1
@@ -201,7 +205,8 @@ def main(file_path, associativity):
                         dram_active += 45
 
                     # Penalty applied for all DRAM access including writes
-                    penalty += 640
+                    dram_penalty += 640
+                    dram_accesses += 1
 
                     if dirty:
                         # Invalidate block in L1 cache
@@ -211,17 +216,38 @@ def main(file_path, associativity):
                         dram_active += 50
 
                         # Writeback to DRAM (penalties apply for writeback assumption)
-                        penalty += 640
+                        dram_penalty += 640
+                        dram_accesses += 1
 
+    l1i_energy = l1_idle * 0.25 + l1i_active
+    l1d_energy = l1_idle * 0.25 + l1d_active
+    l2_energy = l2_idle * 0.8 + l2_active * 2 + l2_penalty / 1000
+    dram_energy = dram_idle + 0.8 + dram_active * 4 + dram_penalty / 1000
 
-    total_energy = penalty / 1000 + l1_idle * 0.5 + l1_active + l2_idle * 0.8 + l2_active * 2 + dram_idle + 0.8 + dram_active * 4
-    
-
+    total_energy =  l1i_energy + l1d_energy + l2_energy + dram_energy
+    # Overall totals
+    print(f'Total Time: {max(l2_idle + l2_active, dram_idle + dram_active)}  ns')
+    print('Total Energy: ', total_energy / (10 ** 9), 'Joules')
+    # L1 Instruction totals
+    print(f'L1 Instruction total accesses: {l1_instruction_total}')
+    print(f'L1 Instruction misses: {l1_instruction_total - l1_instruction_hits}')
+    print(f'L1 Instruction energy: {l1i_energy / (10 ** 9)} Joules')
+    # L1 Data totals
+    print(f'L1 Data total accesses: {l1_data_total}')
+    print(f'L1 Data misses: {l1_data_total - l1_data_hits}')
+    print(f'L1 Data energy: {l1d_energy / (10 ** 9)} Joules')
+    # L2 totals
+    print(f'L2 total accesses: {l2_total}')
+    print(f'L2 misses: {l2_total - l2_hits}')
+    print(f'L2 energy: {l2_energy / (10 ** 9)} Joules')
+    # DRAM totals
+    print(f'DRAM total accesses: {dram_accesses}')
+    print(f'DRAM energy: {dram_energy / (10 ** 9)} Joules')
+    # Hit Rates
     print(f'L1 Instruction Hit Rate: {l1_instruction_hits / l1_instruction_total * 100}%')
     print(f'L1 Data Hit Rate: {l1_data_hits / l1_data_total * 100}%')
     print(f'L2 Hit Rate: {l2_hits / l2_total * 100}%')
-    print(f'Total Time: {dram_idle + dram_active }  ns')
-    print('Total Energy: ', total_energy / (10 ** 9), 'Joules')
+
     
     return
 
@@ -232,11 +258,11 @@ def main(file_path, associativity):
 if __name__ == '__main__':
 
     for arg in sys.argv[1:]:
-        # for assoc in [2,4,8]:
-        print(f'Running {arg} with associativity {2}')
-        main(arg, 2)
-        print('------\n')
-        # print('---------------------------------\n')
+        for assoc in [2,4,8]:
+            print(f'Running {arg} with associativity {assoc}')
+            main(arg, 2)
+            print('------\n')
+        print('---------------------------------\n')
     
         
 
